@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 const TodoSection = () => {
-  const [tasks, setTasks] = useState<{ text: string; date: string; completed: boolean }[]>([]);
+  const [tasks, setTasks] = useState<
+    { text: string; date: string; completed: boolean }[]
+  >([]);
   const [newTask, setNewTask] = useState("");
   const [editTaskIndex, setEditTaskIndex] = useState<number | null>(null);
   const [editTaskText, setEditTaskText] = useState("");
@@ -69,7 +71,7 @@ const TodoSection = () => {
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-md">
       <h2 className="text-xl font-semibold">Todo List</h2>
-      
+
       {/* Task Input Section */}
       <div className="flex gap-2 w-full">
         <input
@@ -86,50 +88,21 @@ const TodoSection = () => {
           Add Task
         </button>
       </div>
-
-      {/* Task List Section */}
-      <div className="w-full">
-        {tasks.map((task, index) => (
-          <div
-            key={index}
-            className={`flex justify-between items-center border-b py-2 ${
-              task.completed ? "line-through text-gray-500" : ""
-            }`}
-            onClick={() => handleToggleTask(index)} // Toggle task completion on click
-          >
-            <span className="flex-1">{task.text}</span>
-            <span className="text-xs text-gray-500">{task.date}</span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent the task from being toggled when clicking the delete button
-                handleDeleteTask(index);
-              }}
-              className="text-red-500 hover:text-red-700"
-            >
-              🗑️ {/* Delete Icon */}
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditTask(index); // Start editing
-              }}
-              className="text-yellow-500 hover:text-yellow-700"
-            >
-              ✏️ {/* Edit Icon */}
-            </button>
-          </div>
-        ))}
-      </div>
-
       {/* Edit Task Section */}
       {editTaskIndex !== null && (
         <div className="flex gap-2 w-full">
-          <input
-            type="text"
+          <textarea
             value={editTaskText}
             onChange={(e) => setEditTaskText(e.target.value)}
             className="border border-gray-300 rounded px-4 py-2 w-full text-black"
+            rows={Math.max(2, editTaskText.split("\n").length)} // This will grow with content
           />
+          {/* <textarea
+  value={editTaskText}
+  onChange={(e) => setEditTaskText(e.target.value)}
+  className="border border-gray-300 rounded px-4 py-2 w-full text-black"
+  rows={editTaskText.length > 50 ? 3 : 1} // Adjust rows based on task length
+/> */}
           <button
             onClick={handleSaveEdit}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
@@ -144,6 +117,45 @@ const TodoSection = () => {
           </button>
         </div>
       )}
+
+      {/* Task List Section */}
+      <div className="w-full">
+        {tasks.map((task, index) => (
+          <div
+            key={index}
+            className={`flex justify-between items-center border-b py-2 ${
+              task.completed ? "line-through text-gray-500" : ""
+            }`}
+            onClick={() => handleToggleTask(index)} // Toggle task completion on click
+          >
+            {/* saving only the first words of the task "file" */}
+            <span className="flex-1">
+              {task.text.length > 20
+                ? `${task.text.substring(0, 20)}...`
+                : task.text}
+            </span>
+            <span className="text-xs text-gray-500">{task.date}</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the task from being toggled when clicking the delete button
+                handleDeleteTask(index);
+              }}
+              className="text-red-500 hover:text-red-700  mr-2"
+            >
+              🗑️ {/* Delete Icon */}
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditTask(index); // Start editing
+              }}
+              className="text-yellow-500 hover:text-yellow-700 ml-1"
+            >
+              ✏️ {/* Edit Icon */}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
