@@ -1,10 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const TodoSection = () => {
-  const [tasks, setTasks] = useState<
-    { text: string; date: string; completed: boolean }[]
-  >([]);
+  const [tasks, setTasks] = useState<{ text: string; date: string; completed: boolean }[]>([]);
   const [newTask, setNewTask] = useState("");
+  const [editTaskIndex, setEditTaskIndex] = useState<number | null>(null);
+  const [editTaskText, setEditTaskText] = useState("");
+
+  // Load tasks from local storage on component mount
+  useEffect(() => {
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    }
+  }, []);
+
+  // Update local storage whenever tasks change
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
   const handleAddTask = () => {
     if (newTask.trim() !== "") {
@@ -32,24 +45,49 @@ const TodoSection = () => {
     setTasks(updatedTasks);
   };
 
+  const handleEditTask = (index: number) => {
+    setEditTaskIndex(index);
+    setEditTaskText(tasks[index].text);
+  };
+
+  const handleSaveEdit = () => {
+    if (editTaskIndex !== null) {
+      const updatedTasks = tasks.map((task, i) =>
+        i === editTaskIndex ? { ...task, text: editTaskText } : task
+      );
+      setTasks(updatedTasks);
+      setEditTaskIndex(null);
+      setEditTaskText("");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditTaskIndex(null);
+    setEditTaskText("");
+  };
+
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-md">
       <h2 className="text-xl font-semibold">Todo List</h2>
-      <input
-        type="text"
-        value={newTask}
-        onChange={(e) => setNewTask(e.target.value)}
-        className="border border-gray-300 rounded px-4 py-2 w-full text-black"
-        placeholder="Enter a new task"
-      />
-      <button
-        onClick={handleAddTask}
-        className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 transition-colors"
-      >
-        Add Task
-      </button>
+      
+      {/* Task Input Section */}
+      <div className="flex gap-2 w-full">
+        <input
+          type="text"
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+          className="border border-gray-300 rounded px-4 py-2 w-full text-black"
+          placeholder="Enter a new task"
+        />
+        <button
+          onClick={handleAddTask}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+        >
+          Add Task
+        </button>
+      </div>
 
-      {/* Display the list of tasks */}
+      {/* Task List Section */}
       <div className="w-full">
         {tasks.map((task, index) => (
           <div
@@ -59,8 +97,6 @@ const TodoSection = () => {
             }`}
             onClick={() => handleToggleTask(index)} // Toggle task completion on click
           >
-            <span className="h-2 w-2 rounded-full bg-current mr-2"></span>{" "}
-            {/* Dot */}
             <span className="flex-1">{task.text}</span>
             <span className="text-xs text-gray-500">{task.date}</span>
             <button
@@ -72,9 +108,42 @@ const TodoSection = () => {
             >
               🗑️ {/* Delete Icon */}
             </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditTask(index); // Start editing
+              }}
+              className="text-yellow-500 hover:text-yellow-700"
+            >
+              ✏️ {/* Edit Icon */}
+            </button>
           </div>
         ))}
       </div>
+
+      {/* Edit Task Section */}
+      {editTaskIndex !== null && (
+        <div className="flex gap-2 w-full">
+          <input
+            type="text"
+            value={editTaskText}
+            onChange={(e) => setEditTaskText(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-2 w-full text-black"
+          />
+          <button
+            onClick={handleSaveEdit}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+          >
+            Save
+          </button>
+          <button
+            onClick={handleCancelEdit}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 };
