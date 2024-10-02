@@ -18,12 +18,12 @@ const TaskInput: React.FC<TaskInputProps> = ({
         type="text"
         value={newTask}
         onChange={(e) => setNewTask(e.target.value)}
-        className="border border-gray-300 rounded px-4 py-2 w-full text-black mb-4"
+        className="border border-gray-300 rounded px-4 py-2 w-full text-black mb-2"
         placeholder="Enter a new task"
       />
       <button
         onClick={handleAddTask}
-        className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 transition-colors"
+        className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 transition-colors mt-2"
       >
         Add Task
       </button>
