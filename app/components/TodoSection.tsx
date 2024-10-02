@@ -1,6 +1,4 @@
-// components/TodoSection.tsx
-"use client";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const TodoSection = () => {
   const [tasks, setTasks] = useState<
@@ -16,17 +14,22 @@ const TodoSection = () => {
         date: currentDate,
         completed: false,
       };
+
       setTasks([newTaskObj, ...tasks]);
       setNewTask("");
     }
   };
 
-  const toggleTaskCompletion = (index: number) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task, i) =>
-        i === index ? { ...task, completed: !task.completed } : task
-      )
+  const handleToggleTask = (index: number) => {
+    const updatedTasks = tasks.map((task, i) =>
+      i === index ? { ...task, completed: !task.completed } : task
     );
+    setTasks(updatedTasks);
+  };
+
+  const handleDeleteTask = (index: number) => {
+    const updatedTasks = tasks.filter((_, i) => i !== index);
+    setTasks(updatedTasks);
   };
 
   return (
@@ -46,22 +49,32 @@ const TodoSection = () => {
         Add Task
       </button>
 
-      <ul className="list-disc list-inside mt-4 w-full">
+      {/* Display the list of tasks */}
+      <div className="w-full">
         {tasks.map((task, index) => (
-          <li
+          <div
             key={index}
-            className={`text-left cursor-pointer ${
+            className={`flex justify-between items-center border-b py-2 ${
               task.completed ? "line-through text-gray-500" : ""
             }`}
-            onClick={() => toggleTaskCompletion(index)}
+            onClick={() => handleToggleTask(index)} // Toggle task completion on click
           >
-            <div className="flex justify-between">
-              <span>{task.text}</span>
-              <span className="text-xs text-gray-500">{task.date}</span>
-            </div>
-          </li>
+            <span className="h-2 w-2 rounded-full bg-current mr-2"></span>{" "}
+            {/* Dot */}
+            <span className="flex-1">{task.text}</span>
+            <span className="text-xs text-gray-500">{task.date}</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the task from being toggled when clicking the delete button
+                handleDeleteTask(index);
+              }}
+              className="text-red-500 hover:text-red-700"
+            >
+              🗑️ {/* Delete Icon */}
+            </button>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

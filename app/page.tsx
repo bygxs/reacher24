@@ -4,7 +4,7 @@ import TodoSection from "./components/TodoSection"; // Adjust the import path if
 
 // Header Component
 const Header = () => (
-  <header className="text-2xl font-bold tracking-[0.9em] text-center break-words">
+  <header className="text-2xl font-bold tracking-[0.3em] text-center break-words">
     B I N I Y A M GEBRE EGZIABHERH SJOMAR
   </header>
 );
