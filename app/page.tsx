@@ -3,13 +3,20 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
-  const [tasks, setTasks] = useState<string[]>([]); // State to hold tasks
+  const [tasks, setTasks] = useState<{ text: string; date: string }[]>([]); // State to hold tasks with date
   const [newTask, setNewTask] = useState(""); // State to hold the new task input
 
-  // Function to handle adding a new task
+  // Function to handle adding a new task with a date stamp
   const handleAddTask = () => {
     if (newTask.trim() !== "") {
-      setTasks([...tasks, newTask]);
+      const currentDate = new Date().toLocaleString(); // Get the current date and time
+      const newTaskObj = {
+        text: newTask,
+        date: currentDate,
+      };
+
+      // Prepend the new task to the beginning of the tasks array to make newest task appear first
+      setTasks([newTaskObj, ...tasks]);
       setNewTask(""); // Clear the input after adding the task
     }
   };
@@ -17,9 +24,8 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       {/* Header with Your Name */}
-      <header className="text-2xl font-bold row-start-1 tracking-wide tracking-[0.5em]">
-        {" "}
-        B I N I Y A M{" "}
+      <header className="text-2xl font-bold row-start-1 tracking-wide tracking-[1.5em]">
+        B I N I Y A M GEBRE-EGZIABHERH SJOMAR
       </header>
 
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -44,12 +50,16 @@ export default function Home() {
           <ul className="list-disc list-inside mt-4 w-full">
             {tasks.map((task, index) => (
               <li key={index} className="text-left">
-                {task}
+                <div className="flex justify-between">
+                  <span>{task.text}</span> {/* Task description */}
+                  <span className="text-xs text-gray-500">{task.date}</span> {/* Date stamp */}
+                </div>
               </li>
             ))}
           </ul>
         </div>
-
+  
+  
         <Image
           className="dark:invert"
           src="https://nextjs.org/icons/next.svg"
