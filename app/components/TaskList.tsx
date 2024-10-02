@@ -1,5 +1,4 @@
-// app/components/TaskList.tsx
-import React, { useState } from 'react';
+import React from "react";
 
 interface Task {
   text: string;
@@ -11,80 +10,50 @@ interface TaskListProps {
   tasks: Task[];
   onToggleTask: (index: number) => void;
   onDeleteTask: (index: number) => void;
-  onEditTask: (index: number, newText: string) => void;
+  onEditTask: (index: number, newText: string) => void; // Include the edit prop
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onToggleTask, onDeleteTask, onEditTask }) => {
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editText, setEditText] = useState<string>('');
-
-  const handleEditClick = (index: number) => {
-    setEditIndex(index);
-    setEditText(tasks[index].text); // Set the text to the current task text
-  };
-
-  const handleSaveEdit = (index: number) => {
-    onEditTask(index, editText); // Call the edit function with new text
-    setEditIndex(null); // Exit edit mode
-    setEditText(''); // Clear the input
-  };
-
+const TaskList: React.FC<TaskListProps> = ({
+  tasks,
+  onToggleTask,
+  onDeleteTask,
+  onEditTask, // Accept the edit prop
+}) => {
   return (
     <div className="w-full">
       {tasks.map((task, index) => (
         <div
           key={index}
           className={`flex justify-between items-center border-b py-2 ${
-            task.completed ? 'line-through text-gray-500' : ''
+            task.completed ? "line-through text-gray-500" : ""
           }`}
+          onClick={() => onToggleTask(index)} // Toggle task completion on click
         >
-          {editIndex === index ? (
-            <div className="flex items-center">
-              <input
-                type="text"
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                className="border border-gray-300 rounded px-2 py-1 mr-2 text-black"
-                style={{ width: '200px' }} // Ensure input has enough width
-              />
-              <button
-                onClick={() => handleSaveEdit(index)}
-                className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-              >
-                Save
-              </button>
-              <button
-                onClick={() => setEditIndex(null)} // Cancel editing
-                className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-1" onClick={() => onToggleTask(index)}>
-              <span className="h-2 w-2 rounded-full bg-current mr-2"></span>
-              <span className="flex-1">{task.text}</span>
-              <span className="text-xs text-gray-500">{task.date}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent toggling task when deleting
-                  onDeleteTask(index);
-                }}
-                className="text-red-500 hover:text-red-700"
-              >
-                🗑️
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent toggling task when editing
-                  handleEditClick(index);
-                }}
-                className="text-blue-500 hover:text-blue-700 ml-2"
-              >
-                ✏️
-              </button>
-            </div>
-          )}
+          <span className="flex-1">{task.text}</span>
+          <span className="text-xs text-gray-500">{task.date}</span>
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent the task from being toggled when clicking the delete button
+              onDeleteTask(index);
+            }}
+            className="text-red-500 hover:text-red-700"
+          >
+            🗑️ {/* Delete Icon */}
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent toggling task when clicking the edit button
+              // Trigger the editing functionality here
+              // Example: You could call a function to handle editing
+              const newText = prompt("Edit task:", task.text);
+              if (newText) {
+                onEditTask(index, newText);
+              }
+            }}
+            className="text-blue-500 hover:text-blue-700 ml-2"
+          >
+            ✏️ {/* Edit Icon */}
+          </button>
         </div>
       ))}
     </div>
