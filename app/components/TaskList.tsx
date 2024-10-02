@@ -1,5 +1,5 @@
 // app/components/TaskList.tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 interface Task {
   text: string;
@@ -14,14 +14,9 @@ interface TaskListProps {
   onEditTask: (index: number, newText: string) => void;
 }
 
-const TaskList: React.FC<TaskListProps> = ({
-  tasks,
-  onToggleTask,
-  onDeleteTask,
-  onEditTask,
-}) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, onToggleTask, onDeleteTask, onEditTask }) => {
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editText, setEditText] = useState<string>("");
+  const [editText, setEditText] = useState<string>('');
 
   const handleEditClick = (index: number) => {
     setEditIndex(index);
@@ -31,7 +26,7 @@ const TaskList: React.FC<TaskListProps> = ({
   const handleSaveEdit = (index: number) => {
     onEditTask(index, editText); // Call the edit function with new text
     setEditIndex(null); // Exit edit mode
-    setEditText(""); // Clear the input
+    setEditText(''); // Clear the input
   };
 
   return (
@@ -40,17 +35,17 @@ const TaskList: React.FC<TaskListProps> = ({
         <div
           key={index}
           className={`flex justify-between items-center border-b py-2 ${
-            task.completed ? "line-through text-gray-500" : ""
+            task.completed ? 'line-through text-gray-500' : ''
           }`}
         >
           {editIndex === index ? (
             <div className="flex items-center">
               <input
-                type="text" // This should be fine since "text" is a valid HTML input type
+                type="text"
                 value={editText}
                 onChange={(e) => setEditText(e.target.value)}
-                className="border border-gray-300 rounded px-2 py-1 mr-2 text-black" // Added 'text-black' for visible text
-                style={{ width: "200px" }} // Ensure input has enough width
+                className="border border-gray-300 rounded px-2 py-1 mr-2 text-black"
+                style={{ width: '200px' }} // Ensure input has enough width
               />
               <button
                 onClick={() => handleSaveEdit(index)}
