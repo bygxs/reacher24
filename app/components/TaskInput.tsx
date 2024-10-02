@@ -1,19 +1,22 @@
-// TaskInput.tsx
-import React from "react";
+// app/components/TaskInput.tsx
+import React, { useState } from "react";
 
 interface TaskInputProps {
-  newTask: string;
-  setNewTask: React.Dispatch<React.SetStateAction<string>>;
-  handleAddTask: () => void;
+  onAddTask: (task: string) => void; // Prop to add task
 }
 
-const TaskInput: React.FC<TaskInputProps> = ({
-  newTask,
-  setNewTask,
-  handleAddTask,
-}) => {
+const TaskInput: React.FC<TaskInputProps> = ({ onAddTask }) => {
+  const [newTask, setNewTask] = useState("");
+
+  const handleAddTask = () => {
+    if (newTask.trim() !== "") {
+      onAddTask(newTask); // Call the function from props
+      setNewTask(""); // Clear the input
+    }
+  };
+
   return (
-    <div>
+    <div className="flex flex-col items-center gap-4 w-full">
       <input
         type="text"
         value={newTask}
@@ -23,7 +26,7 @@ const TaskInput: React.FC<TaskInputProps> = ({
       />
       <button
         onClick={handleAddTask}
-        className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 transition-colors mt-2"
+        className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 transition-colors"
       >
         Add Task
       </button>
